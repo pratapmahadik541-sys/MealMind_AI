@@ -1,0 +1,6 @@
+{
+  "name": "MealMind AI - Smart Canteen Food Waste Management",
+  "description": "AI-powered surplus calculation, demand forecasting, inventory management, and staff-governed food donation platform for campus dining and restaurants.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,194 @@
+{
+  "entities": {
+    "inventoryItem": {
+      "title": "Inventory Item",
+      "description": "Food inventory item prepared and tracked in the canteen",
+      "type": "object",
+      "properties": {
+        "itemName": {
+          "type": "string",
+          "description": "Name of the prepared food dish"
+        },
+        "category": {
+          "type": "string",
+          "description": "Food category e.g. Main Course, Salad, Bakery, Soup"
+        },
+        "mealShift": {
+          "type": "string",
+          "description": "Shift: Breakfast, Lunch, Dinner, or Late Night"
+        },
+        "preparedQty": {
+          "type": "number",
+          "description": "Total quantity prepared"
+        },
+        "soldQty": {
+          "type": "number",
+          "description": "Quantity sold or served to students"
+        },
+        "reservedQty": {
+          "type": "number",
+          "description": "Quantity reserved or held"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement (portions, kg, trays)"
+        },
+        "costPerUnit": {
+          "type": "number",
+          "description": "Cost per unit in currency"
+        },
+        "preparedAt": {
+          "type": "string",
+          "description": "ISO timestamp when item was prepared"
+        },
+        "safeHoldingExpiry": {
+          "type": "string",
+          "description": "ISO timestamp for safe holding temperature expiry"
+        },
+        "location": {
+          "type": "string",
+          "description": "Station or counter where item is held"
+        },
+        "batchNumber": {
+          "type": "string",
+          "description": "Batch tracking identification code"
+        },
+        "storageTempC": {
+          "type": "number",
+          "description": "Current holding temperature in Celsius"
+        },
+        "status": {
+          "type": "string",
+          "description": "Status: active, review_pending, repurposed, donated, composted"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last updated timestamp"
+        }
+      },
+      "required": ["itemName", "category", "mealShift", "preparedQty", "soldQty", "unit", "costPerUnit", "status"]
+    },
+    "surplusReview": {
+      "title": "Surplus Safety Review",
+      "description": "Staff-governed food safety review for potential surplus food",
+      "type": "object",
+      "properties": {
+        "inventoryId": {
+          "type": "string",
+          "description": "Reference to the inventory document"
+        },
+        "itemName": {
+          "type": "string",
+          "description": "Name of the item under review"
+        },
+        "surplusQty": {
+          "type": "number",
+          "description": "Calculated surplus quantity"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement"
+        },
+        "urgency": {
+          "type": "string",
+          "description": "Urgency tier: Low, Medium, High, Critical"
+        },
+        "tempCheckPassed": {
+          "type": "boolean",
+          "description": "Whether staff verified safe holding temperature"
+        },
+        "smellVisualPassed": {
+          "type": "boolean",
+          "description": "Whether staff verified smell and visual inspection"
+        },
+        "safetyNotes": {
+          "type": "string",
+          "description": "Staff inspection notes or temperature logged"
+        },
+        "reviewedByStaff": {
+          "type": "string",
+          "description": "Name or ID of reviewing staff member"
+        },
+        "decision": {
+          "type": "string",
+          "description": "Staff decision: pending, approved_for_donation, repurpose_in_kitchen, discount_flash_sale, compost_discard"
+        },
+        "reviewedAt": {
+          "type": "string",
+          "description": "Timestamp of review"
+        }
+      },
+      "required": ["inventoryId", "itemName", "surplusQty", "urgency", "decision"]
+    },
+    "donationManifest": {
+      "title": "Donation Manifest",
+      "description": "Verified donation manifest for surplus food redistribution",
+      "type": "object",
+      "properties": {
+        "recipientOrg": {
+          "type": "string",
+          "description": "Partner charity, food bank, or campus pantry"
+        },
+        "contactPerson": {
+          "type": "string",
+          "description": "Name and phone of pickup contact"
+        },
+        "itemsSummary": {
+          "type": "string",
+          "description": "Summary of food items included in donation"
+        },
+        "totalPortions": {
+          "type": "number",
+          "description": "Total portions or servings donated"
+        },
+        "tempAtHandoffC": {
+          "type": "number",
+          "description": "Measured temperature at handoff in Celsius"
+        },
+        "staffSupervisor": {
+          "type": "string",
+          "description": "Staff supervisor authorizing handoff"
+        },
+        "verificationCode": {
+          "type": "string",
+          "description": "Security verification code for receipt"
+        },
+        "status": {
+          "type": "string",
+          "description": "Manifest status: pending_pickup, completed, cancelled"
+        },
+        "scheduledPickupTime": {
+          "type": "string",
+          "description": "Scheduled pickup time"
+        },
+        "completedAt": {
+          "type": "string",
+          "description": "Completion timestamp"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["recipientOrg", "itemsSummary", "totalPortions", "staffSupervisor", "status"]
+    }
+  },
+  "firestore": {
+    "/inventory/{itemId}": {
+      "schema": "inventoryItem",
+      "description": "Canteen food inventory batches with prepared and sold figures"
+    },
+    "/surplusReviews/{reviewId}": {
+      "schema": "surplusReview",
+      "description": "Staff review log for surplus risk assessment and safety approval"
+    },
+    "/donationManifests/{manifestId}": {
+      "schema": "donationManifest",
+      "description": "Traceable donation handoff receipts for food rescue partners"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global denial fallback
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    function isValidInventory(data) {
+      return data.itemName is string && data.itemName.size() <= 100
+        && data.category is string && data.category.size() <= 50
+        && data.mealShift is string && data.mealShift.size() <= 30
+        && data.preparedQty is number && data.preparedQty >= 0
+        && data.soldQty is number && data.soldQty >= 0
+        && data.unit is string && data.unit.size() <= 20
+        && data.costPerUnit is number && data.costPerUnit >= 0;
+    }
+
+    function isValidReview(data) {
+      return data.inventoryId is string && data.inventoryId.size() <= 128
+        && data.itemName is string && data.itemName.size() <= 100
+        && data.surplusQty is number && data.surplusQty >= 0
+        && data.urgency is string && data.urgency.size() <= 20
+        && data.decision is string && data.decision.size() <= 40;
+    }
+
+    function isValidManifest(data) {
+      return data.recipientOrg is string && data.recipientOrg.size() <= 120
+        && data.itemsSummary is string && data.itemsSummary.size() <= 300
+        && data.totalPortions is number && data.totalPortions >= 0
+        && data.staffSupervisor is string && data.staffSupervisor.size() <= 80
+        && data.status is string && data.status.size() <= 30;
+    }
+
+    // Connection testing doc
+    match /test/connection {
+      allow read, write: if true;
+    }
+
+    // Inventory collection
+    match /inventory/{itemId} {
+      allow read: if isValidId(itemId);
+      allow create: if isValidId(itemId) && isValidInventory(request.resource.data);
+      allow update: if isValidId(itemId) && isValidInventory(request.resource.data);
+      allow delete: if isValidId(itemId);
+    }
+
+    // Surplus Reviews collection
+    match /surplusReviews/{reviewId} {
+      allow read: if isValidId(reviewId);
+      allow create: if isValidId(reviewId) && isValidReview(request.resource.data);
+      allow update: if isValidId(reviewId) && isValidReview(request.resource.data);
+      allow delete: if isValidId(reviewId);
+    }
+
+    // Donation Manifests collection
+    match /donationManifests/{manifestId} {
+      allow read: if isValidId(manifestId);
+      allow create: if isValidId(manifestId) && isValidManifest(request.resource.data);
+      allow update: if isValidId(manifestId) && isValidManifest(request.resource.data);
+      allow delete: if isValidId(manifestId);
+    }
+  }
+}
